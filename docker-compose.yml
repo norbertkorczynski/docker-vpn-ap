@@ -37,7 +37,7 @@ services:
         - /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
       environment:
         - INTERFACE=wlan0
-        - OUTGOINGS=tun0,eth0
+        - OUTGOINGS=tailscale0,eth0
         - CHANNEL=36
         - WPA_PASSPHRASE=Tomek1234.
         - SSID=VPN_Berlin
