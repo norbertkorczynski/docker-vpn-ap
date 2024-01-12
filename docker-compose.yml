@@ -1,24 +1,24 @@
 version: "2"
- 
-services: 
+
+services:
     # Start: Replace this block with your VPN servie provider
     # Noted that 'privileged: true' in your VPN config is needed for docker-ap to manipulate AP
-    surfshark:
-        image: ilteoood/docker-surfshark
-        container_name: surfshark
-        environment: 
-            - SURFSHARK_USER=YOUR_USERNAME
-            - SURFSHARK_PASSWORD=YOUR_PASSWORD
-            - SURFSHARK_COUNTRY=jp
-            - SURFSHARK_CITY=tok
-            - CONNECTION_TYPE=udp
-            - LAN_NETWORK=192.168.1.0/24
-        cap_add: 
-            - NET_ADMIN
-        devices:
-            - /dev/net/tun
+    tailscale:
+        image: tailscale/tailscale:stable
+        hostname: tailscale-pivpn
+        container_name: tailscale
+        volumes:
+          - ./tailscale:/var/lib # State data will be stored in this directory
+          - /dev/net/tun:/dev/net/tun # Required for tailscale to work
+        cap_add: # Required for tailscale to work
+          - net_admin
+          - sys_module
+        command: tailscaled
         privileged: true
         restart: unless-stopped
+        environment:
+          - TS_AUTHKEY=tskey-auth-kqN5Aq4CNTRL-gzGmo8qTxJhm7tttveAPJhR8PuHeF4Rq1
+          - TS_ACCEPT_DNS=true
     # End:: Replace this block with your VPN servie provider
     docker-ap:
       build:
@@ -28,10 +28,10 @@ services:
       image: dokcer-ap
       restart: unless-stopped
       privileged: true
-      depends_on: 
-        surfshark:
+      depends_on:
+        tailscale:
           condition: service_healthy
-      network_mode: service:surfshark
+      network_mode: service:tailscale
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - /sys/fs/cgroup/systemd:/sys/fs/cgroup/systemd
@@ -39,8 +39,8 @@ services:
         - INTERFACE=wlan0
         - OUTGOINGS=tun0,eth0
         - CHANNEL=36
-        - WPA_PASSPHRASE=password
-        - SSID=docker-ap
+        - WPA_PASSPHRASE=Tomek1234.
+        - SSID=VPN_Berlin
         - SUBNET=192.168.2.0
         - AP_ADDR=192.168.2.1
         - DNS_ADDRESSES=192.168.1.1
