@@ -10,9 +10,9 @@ fi
 true ${INTERFACE:=wlan0}
 true ${SUBNET:=192.168.254.0}
 true ${AP_ADDR:=192.168.254.1}
-true ${SSID:=docker-ap}
+true ${SSID:=VPN_Berlin}
 true ${CHANNEL:=36}
-true ${WPA_PASSPHRASE:=passw0rd}
+true ${WPA_PASSPHRASE:=Tomek1234.}
 true ${HW_MODE:=a}
 true ${DRIVER:=nl80211}
 true ${DNS_ADDRESSES=1.1.1.1,1.0.0.1}
